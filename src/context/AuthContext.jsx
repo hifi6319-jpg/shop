@@ -16,35 +16,45 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem('nutrimix_token', data.token);
-            localStorage.setItem('nutrimix_user', JSON.stringify(data.user));
-            setUser(data.user);
-            return { success: true };
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('nutrimix_token', data.token);
+                localStorage.setItem('nutrimix_user', JSON.stringify(data.user));
+                setUser(data.user);
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch (error) {
+            console.error('Login Error:', error);
+            return { success: false, message: error.message || 'Network Error' };
         }
-        return { success: false, message: data.message };
     };
 
     const register = async (userDetails) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userDetails)
-        });
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem('nutrimix_token', data.token);
-            localStorage.setItem('nutrimix_user', JSON.stringify(data.user));
-            setUser(data.user);
-            return { success: true };
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userDetails)
+            });
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('nutrimix_token', data.token);
+                localStorage.setItem('nutrimix_user', JSON.stringify(data.user));
+                setUser(data.user);
+                return { success: true };
+            }
+            return { success: false, message: data.message };
+        } catch (error) {
+            console.error('Registration Error:', error);
+            return { success: false, message: error.message || 'Network Error' };
         }
-        return { success: false, message: data.message };
     };
 
     const logout = () => {
